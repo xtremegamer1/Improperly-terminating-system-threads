@@ -54,5 +54,10 @@ void DaughterThread(_In_ PVOID StartContext)
 	return;
 }
 
-//Conclusion: Threads not terminated with PsTerminateSystemThread do not appear in task manager's thread count. They do not appear to lead paged or nonpaged pool. 
+//Threads not terminated with PsTerminateSystemThread do not appear in task manager's thread count. They do not appear to leak paged or nonpaged pool. 
 //It seems safe to terminate threads by returning, although maybe it will slowly leak something.
+//Update: after running for 6 hours and opening 10 million threads paged pool appeared to grow 90MB and non paged pool 10 MB.
+//Could be due to a background process allocating more paged pool, if there is a leak it is not significant enough to pay any mind to.
+
+//CONCLUSION: PsTerminateSystemThread is not required and simply returning from thread start routine causes a miniscule, if any impact on system resources.
+//However PsTerminateSystemThread is able to change the thread exit status while simply returning cannot.
